@@ -1,0 +1,113 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TODO APP</title>
+  <link rel="stylesheet" href="style.css" />
+  <!-- bootstrap icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css" />
+</head>
+
+<body>
+  <!-- navbar and login -->
+  <nav class="navbar navbar-dark navbar-expand-lg bg-dark">
+    <div class="container">
+      <a class="navbar-brand" href="#">Todo List</a>
+      <div id="auth">
+        <div class="ifLogin">
+          <a class="btn btn-sm btn-primary mx-2" data-bs-toggle="modal" data-bs-target="#loginModal">Login</a>
+          <a class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#registerModal">Register</a>
+        </div>
+        <div class="ifLogout">
+          <span class="text-light"></span>
+          <a href="" class="text-white-50 my-2 signout">sign out</a>
+        </div>
+
+      </div>
+    </div>
+  </nav>
+
+  <main>
+
+    <!-- if user not login -->
+    <div class="alert alert-light" role="alert">
+      Görevlerinizi görmek için lütfen giriş yapınız...
+    </div>
+
+    <!-- todos list -->
+    <ul class="list-group todos">
+      <!-- firebasedan gelicek -->
+    </ul>
+
+    <!-- Add new Todo -->
+    <form class="my-4 add">
+      <div class="input-group">
+        <label for="newTodo" class="input-group-text">Yeni Görev:</label>
+        <input type="text" name="newTodo" id="newTodo" class="form-control" />
+        <button class="btn btn-success">Gönder</button>
+      </div>
+    </form>
+  </main>
+
+  <!-- Login Modal -->
+  <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="loginModalLabel">Giriş Yap</h5>
+        </div>
+        <div class="modal-body">
+          <form id="login" class="mx-2">
+            <label for="email" class="form-label fw-bold">Email</label>
+            <input type="text" class="form-control" name="email" id="email" />
+
+            <label for="pwd" class="form-label mt-2 fw-bold">Password</label>
+            <input type="text" class="form-control" name="pwd" id="pwd" />
+
+            <div class="forgot-pwd text-end mt-2 text-dark">
+              <span>Forgot your password?</span>
+            </div>
+
+            <div class="submit-button text-center mt-3">
+              <button type="submit" class="btn btn-dark col-12">Login</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Register Modal -->
+  <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="lregisterModalLabel">Kayıt Ol</h5>
+        </div>
+        <div class="modal-body">
+          <form id="register" class="mx-2">
+            <label for="email" class="form-label fw-bold">Email</label>
+            <input type="text" class="form-control" name="email" id="email" />
+
+            <label for="pwd" class="form-label mt-2 fw-bold">Password</label>
+            <input type="text" class="form-control" name="pwd" id="pwd" />
+
+            <div class="submit-button text-center mt-3">
+              <button type="submit" class="btn btn-dark col-12">
+                Register
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- bootstrap js cdn -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="bundle.js"></script>
+</body>
+
+</html>
