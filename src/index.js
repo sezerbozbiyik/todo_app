@@ -16,8 +16,7 @@ import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
   signOut,
-  signInWithEmailAndPassword,
-  getAdditionalUserInfo,
+  signInWithEmailAndPassword
 } from "firebase/auth";
 
 const firebaseConfig = {
@@ -84,7 +83,8 @@ registerForm.addEventListener("submit", (e) => {
   createUserWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
       const user = userCredential.user;
-      console.log(user);
+      localStorage.setItem("uid", user.uid);
+      registerForm.submit();
     })
     .catch((err) => {
       console.log(err.message);
@@ -100,19 +100,10 @@ loginForm.addEventListener("submit", (e) => {
   signInWithEmailAndPassword(auth, email, password)
     .then(() => {
       loginForm.submit();
+      localStorage.setItem("uid", user.uid);
     })
     .catch((err) => {
       console.log(err.message);
-    });
-});
-
-// logout user
-const logoutBtn = document.querySelector(".signout");
-logoutBtn.addEventListener("click", (e) => {
-  signOut(auth)
-    .then(() => {})
-    .catch((err) => {
-      console.log(err);
     });
 });
 
@@ -121,11 +112,11 @@ const authNavbar = document.querySelector("#auth");
 const alert = document.querySelector(".alert");
 onAuthStateChanged(auth, (user) => {
   if (user) {
-    authNavbar.firstElementChild.classList.add("d-none");
-    alert.classList.add("d-none");
-    authNavbar.lastElementChild.firstElementChild.textContent = user.email;
-    localStorage.setItem("uid", user.uid);
-    console.log("login olan kullanıcı:", user.email);
+    alert.classList.add('d-none');
+    authNavbar.innerHTML=`
+      <span class="text-light">${user.email}</span>
+      <a href="" class="text-white-50 my-2 signout">sign out</a>
+    `;
 
     // query selection
     const q = query(
@@ -142,11 +133,21 @@ onAuthStateChanged(auth, (user) => {
       });
       listTodos(todos);
     });
+
+    // logout user
+    const logoutBtn = document.querySelector(".signout");
+    logoutBtn.addEventListener("click", (e) => {
+      signOut(auth)
+        .then(() => {})
+        .catch((err) => {
+          console.log(err);
+        });
+    });
   } else {
-    authNavbar.lastElementChild.classList.add("d-none");
+    authNavbar.innerHTML=`
+      <a class="btn btn-sm btn-primary mx-2" data-bs-toggle="modal" data-bs-target="#loginModal">Login</a>
+      <a class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#registerModal">Register</a>
+    `;
     localStorage.removeItem("uid");
-    console.log("user sign out");
   }
 });
-
-console.log(localStorage.getItem("uid"));
