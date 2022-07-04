@@ -99,6 +99,8 @@ const authAlert = (code) => {
     return "Bu mail adresi zaten mevcut."
   }else if (code==="auth/missing-email") {
     return "Lütfen mail adresinizi giriniz."
+  }else if(code==="auth/too-many-requests"){
+    return "Birden fazla hatalı giriş gerçekleşti. Yeniden denemek için bekleyiniz."
   }
 };
 
@@ -145,6 +147,7 @@ loginForm.addEventListener("submit", (e) => {
       loginForm.submit();
     })
     .catch((err) => {
+      console.log(err.code)
       loginAlert.textContent = authAlert(err.code);
       loginAlert.classList.remove("d-none");
     });
