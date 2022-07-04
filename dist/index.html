@@ -24,9 +24,9 @@
 
   <main>
 
-    <!-- if user not login -->
-    <div class="alert alert-light" role="alert">
-      Görevlerinizi görmek için lütfen giriş yapınız...
+    <!-- Alert  -->
+    <div class="alert alert-danger d-none">
+      Lütfen Giriş Yapınız...
     </div>
 
     <!-- todos list -->
@@ -35,7 +35,7 @@
     </ul>
 
     <!-- Add new Todo -->
-    <form class="my-4 add">
+    <form class="my-4 add d-none">
       <div class="input-group">
         <label for="newTodo" class="input-group-text">Yeni Görev:</label>
         <input type="text" name="newTodo" id="newTodo" class="form-control" />

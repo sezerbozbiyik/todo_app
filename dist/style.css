@@ -17,11 +17,14 @@ main {
     color: rebeccapurple;
 }
 .list-group-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  position: relative;
 }
-
+.list-group-item i{
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translate(-50%,-50%);
+}
 .forgot-pwd span:hover{
   cursor: pointer;
   opacity: .7;

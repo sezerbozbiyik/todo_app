@@ -9,6 +9,7 @@ import {
   query,
   orderBy,
   where,
+  updateDoc,
 } from "firebase/firestore";
 
 import {
@@ -42,13 +43,24 @@ const colRef = collection(db, "todos");
 const userId = localStorage.getItem("uid");
 const q = query(colRef, where("uid", "==", userId), orderBy("created_at"));
 
+// create instance dom element
+const addTodoForm = document.querySelector("form.add");
+const todoList = document.querySelector("ul.todos");
+const registerForm = document.querySelector("#register");
+const loginForm = document.querySelector("#login");
+const authNavbar = document.querySelector("#auth");
+const alert = document.querySelector(".alert");
+
 // create list html template
 const listTodos = (todos) => {
   let html = "";
   todos.forEach((d) => {
     html += `
     <li class="list-group-item list-group-item-action" id="${d.id}">
-      ${d.todo}
+      <input class="form-check-input me-1" type="checkbox" ${
+        d.isDone ? "checked" : null
+      }>
+      <span>${d.todo}</span>
       <i class="bi bi-trash-fill"></i>
     </li>`;
   });
@@ -56,39 +68,37 @@ const listTodos = (todos) => {
 };
 
 // add new todo
-const addTodoForm = document.querySelector("form.add");
-const loginAlert = document.createElement("div");
 addTodoForm.addEventListener("submit", (e) => {
   e.preventDefault();
   const newTodo = e.target.newTodo.value.trim();
   const now = new Date();
   const userId = localStorage.getItem("uid");
 
-  if (userId) {
-    addDoc(colRef, {
-      uid: userId,
-      todo: newTodo,
-      created_at: now,
-    }).then(() => addTodoForm.reset());
-  } else {
-    addTodoForm.reset()
-    loginAlert.textContent = "!!! Lütfen Önce Giriş Yapınız. !!!";
-    loginAlert.classList.add("bg-danger", "text-light", "p-1");
-    addTodoForm.after(loginAlert);
-  }
+  addDoc(colRef, {
+    uid: userId,
+    todo: newTodo,
+    created_at: now,
+  }).then(() => addTodoForm.reset());
 });
 
-// delete todo
-const todoList = document.querySelector("ul.todos");
+// delete and update todo
 todoList.addEventListener("click", (e) => {
+  const docRef = doc(db, "todos", e.target.parentElement.id);
+
+  // update
+  if (e.target.tagName === "INPUT") {
+    updateDoc(docRef, {
+      isDone: e.target.checked,
+    });
+  }
+
+  // delete
   if (e.target.tagName === "I") {
-    const docRef = doc(db, "todos", e.target.parentElement.id);
     deleteDoc(docRef);
   }
 });
 
 //register user
-const registerForm = document.querySelector("#register");
 registerForm.addEventListener("submit", (e) => {
   e.preventDefault();
   const email = e.target.email.value;
@@ -103,7 +113,6 @@ registerForm.addEventListener("submit", (e) => {
 });
 
 // login user
-const loginForm = document.querySelector("#login");
 loginForm.addEventListener("submit", (e) => {
   e.preventDefault();
   const email = e.target.email.value;
@@ -118,11 +127,9 @@ loginForm.addEventListener("submit", (e) => {
 });
 
 // user listener
-const authNavbar = document.querySelector("#auth");
-const alert = document.querySelector(".alert");
 onAuthStateChanged(auth, (user) => {
   if (user) {
-    alert.classList.add("d-none");
+    addTodoForm.classList.remove("d-none");
     authNavbar.innerHTML = `
       <span class="text-light">${user.email}</span>
       <a href="" class="text-white-50 my-2 signout">sign out</a>
@@ -148,6 +155,7 @@ onAuthStateChanged(auth, (user) => {
         });
     });
   } else {
+    alert.classList.remove("d-none");
     authNavbar.innerHTML = `
       <a class="btn btn-sm btn-primary mx-2" data-bs-toggle="modal" data-bs-target="#loginModal">Login</a>
       <a class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#registerModal">Register</a>
