@@ -63,7 +63,10 @@ const listTodos = (todos) => {
         d.isDone ? "checked" : null
       }>
       <span>${d.todo}</span>
-      <i class="bi bi-trash-fill"></i>
+      <i class="bi bi-pencil-square" id='edit' data-bs-toggle="modal" data-bs-whatever="${
+        d.todo
+      }" data-bs-target="#editModal"></i>
+      <i class="bi bi-trash-fill" id='delete'></i>
     </li>`;
   });
   todoList.innerHTML = html;
@@ -93,30 +96,30 @@ const authAlert = (code) => {
     return "Böyle bir kullanıcı bulunamadı.";
   } else if (code === "auth/wrong-password") {
     return "Şifrenizi yanlış girdiniz.";
-  }else if (code==="auth/weak-password"){
-    return "Şifreniz en az 6 karakter uzunluğunda olmalıdır."
-  }else if(code==="auth/email-already-in-use"){
-    return "Bu mail adresi zaten mevcut."
-  }else if (code==="auth/missing-email") {
-    return "Lütfen mail adresinizi giriniz."
-  }else if(code==="auth/too-many-requests"){
-    return "Birden fazla hatalı giriş gerçekleşti. Yeniden denemek için bekleyiniz."
+  } else if (code === "auth/weak-password") {
+    return "Şifreniz en az 6 karakter uzunluğunda olmalıdır.";
+  } else if (code === "auth/email-already-in-use") {
+    return "Bu mail adresi zaten mevcut.";
+  } else if (code === "auth/missing-email") {
+    return "Lütfen mail adresinizi giriniz.";
+  } else if (code === "auth/too-many-requests") {
+    return "Birden fazla hatalı giriş gerçekleşti. Yeniden denemek için bekleyiniz.";
   }
 };
 
 // delete and update todo
 todoList.addEventListener("click", (e) => {
-  const docRef = doc(db, "todos", e.target.parentElement.id);
-
   // update
   if (e.target.tagName === "INPUT") {
+    const docRef = doc(db, "todos", e.target.parentElement.id);
     updateDoc(docRef, {
       isDone: e.target.checked,
     });
   }
 
   // delete
-  if (e.target.tagName === "I") {
+  if (e.target.id === "delete") {
+    const docRef = doc(db, "todos", e.target.parentElement.id);
     deleteDoc(docRef);
   }
 });
@@ -131,7 +134,7 @@ registerForm.addEventListener("submit", (e) => {
       registerForm.submit();
     })
     .catch((err) => {
-      console.log(err.code)
+      console.log(err.code);
       registerAlert.textContent = authAlert(err.code);
       registerAlert.classList.remove("d-none");
     });
@@ -147,7 +150,7 @@ loginForm.addEventListener("submit", (e) => {
       loginForm.submit();
     })
     .catch((err) => {
-      console.log(err.code)
+      console.log(err.code);
       loginAlert.textContent = authAlert(err.code);
       loginAlert.classList.remove("d-none");
     });
@@ -189,4 +192,29 @@ onAuthStateChanged(auth, (user) => {
     `;
     localStorage.removeItem("uid");
   }
+});
+
+// show edit modal
+const editModal = document.getElementById("editModal");
+editModal.addEventListener("show.bs.modal", (event) => {
+  const button = event.relatedTarget;
+
+  const value = button.getAttribute("data-bs-whatever");
+
+  const modalBodyInput = editModal.querySelector(".modal-body input");
+  const editForm = editModal.querySelector("form#edit");
+
+  modalBodyInput.value = value;
+  const docRef = doc(db, "todos", event.relatedTarget.parentElement.id);
+
+  // edit todo
+  editForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    updateDoc(docRef, {
+      todo: e.target.todo.value,
+    }).then(() => {
+      editForm.submit();
+    });
+  });
 });
