@@ -50,6 +50,8 @@ const registerForm = document.querySelector("#register");
 const loginForm = document.querySelector("#login");
 const authNavbar = document.querySelector("#auth");
 const alert = document.querySelector(".alert");
+const loginAlert = document.querySelector(".loginAlert");
+const registerAlert = document.querySelector(".registerAlert");
 
 // create list html template
 const listTodos = (todos) => {
@@ -81,6 +83,25 @@ addTodoForm.addEventListener("submit", (e) => {
   }).then(() => addTodoForm.reset());
 });
 
+// create auth alert message
+const authAlert = (code) => {
+  if (code === "auth/invalid-email") {
+    return "Hatalı mail adresi girdiniz.";
+  } else if (code === "auth/internal-error") {
+    return "Lütfen şifrenizi giriniz.";
+  } else if (code === "auth/user-not-found") {
+    return "Böyle bir kullanıcı bulunamadı.";
+  } else if (code === "auth/wrong-password") {
+    return "Şifrenizi yanlış girdiniz.";
+  }else if (code==="auth/weak-password"){
+    return "Şifreniz en az 6 karakter uzunluğunda olmalıdır."
+  }else if(code==="auth/email-already-in-use"){
+    return "Bu mail adresi zaten mevcut."
+  }else if (code==="auth/missing-email") {
+    return "Lütfen mail adresinizi giriniz."
+  }
+};
+
 // delete and update todo
 todoList.addEventListener("click", (e) => {
   const docRef = doc(db, "todos", e.target.parentElement.id);
@@ -108,7 +129,9 @@ registerForm.addEventListener("submit", (e) => {
       registerForm.submit();
     })
     .catch((err) => {
-      console.log(err.message);
+      console.log(err.code)
+      registerAlert.textContent = authAlert(err.code);
+      registerAlert.classList.remove("d-none");
     });
 });
 
@@ -122,7 +145,8 @@ loginForm.addEventListener("submit", (e) => {
       loginForm.submit();
     })
     .catch((err) => {
-      console.log(err.message);
+      loginAlert.textContent = authAlert(err.code);
+      loginAlert.classList.remove("d-none");
     });
 });
 
