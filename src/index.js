@@ -16,7 +16,7 @@ import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
   signOut,
-  signInWithEmailAndPassword
+  signInWithEmailAndPassword,
 } from "firebase/auth";
 
 const firebaseConfig = {
@@ -38,31 +38,44 @@ const auth = getAuth(app);
 // collection ref
 const colRef = collection(db, "todos");
 
+// query selection
+const userId = localStorage.getItem("uid");
+const q = query(colRef, where("uid", "==", userId), orderBy("created_at"));
+
 // create list html template
 const listTodos = (todos) => {
   let html = "";
   todos.forEach((d) => {
-    html += `<li class="list-group-item list-group-item-action" id="${d.id}">
-    ${d.todo}
-    <i class="bi bi-trash-fill"></i>
-</li>`;
+    html += `
+    <li class="list-group-item list-group-item-action" id="${d.id}">
+      ${d.todo}
+      <i class="bi bi-trash-fill"></i>
+    </li>`;
   });
-
   todoList.innerHTML = html;
 };
 
 // add new todo
 const addTodoForm = document.querySelector("form.add");
+const loginAlert = document.createElement("div");
 addTodoForm.addEventListener("submit", (e) => {
   e.preventDefault();
   const newTodo = e.target.newTodo.value.trim();
   const now = new Date();
   const userId = localStorage.getItem("uid");
-  addDoc(colRef, {
-    uid: userId,
-    todo: newTodo,
-    created_at: now,
-  }).then(() => addTodoForm.reset());
+
+  if (userId) {
+    addDoc(colRef, {
+      uid: userId,
+      todo: newTodo,
+      created_at: now,
+    }).then(() => addTodoForm.reset());
+  } else {
+    addTodoForm.reset()
+    loginAlert.textContent = "!!! Lütfen Önce Giriş Yapınız. !!!";
+    loginAlert.classList.add("bg-danger", "text-light", "p-1");
+    addTodoForm.after(loginAlert);
+  }
 });
 
 // delete todo
@@ -81,9 +94,7 @@ registerForm.addEventListener("submit", (e) => {
   const email = e.target.email.value;
   const password = e.target.pwd.value;
   createUserWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-      const user = userCredential.user;
-      localStorage.setItem("uid", user.uid);
+    .then(() => {
       registerForm.submit();
     })
     .catch((err) => {
@@ -100,7 +111,6 @@ loginForm.addEventListener("submit", (e) => {
   signInWithEmailAndPassword(auth, email, password)
     .then(() => {
       loginForm.submit();
-      localStorage.setItem("uid", user.uid);
     })
     .catch((err) => {
       console.log(err.message);
@@ -112,18 +122,12 @@ const authNavbar = document.querySelector("#auth");
 const alert = document.querySelector(".alert");
 onAuthStateChanged(auth, (user) => {
   if (user) {
-    alert.classList.add('d-none');
-    authNavbar.innerHTML=`
+    alert.classList.add("d-none");
+    authNavbar.innerHTML = `
       <span class="text-light">${user.email}</span>
       <a href="" class="text-white-50 my-2 signout">sign out</a>
     `;
-
-    // query selection
-    const q = query(
-      colRef,
-      where("uid", "==", user.uid),
-      orderBy("created_at")
-    );
+    localStorage.setItem("uid", user.uid);
 
     // get collection data
     onSnapshot(q, (snapshot) => {
@@ -144,7 +148,7 @@ onAuthStateChanged(auth, (user) => {
         });
     });
   } else {
-    authNavbar.innerHTML=`
+    authNavbar.innerHTML = `
       <a class="btn btn-sm btn-primary mx-2" data-bs-toggle="modal" data-bs-target="#loginModal">Login</a>
       <a class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#registerModal">Register</a>
     `;

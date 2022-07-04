@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TODO APP</title>
+  <title>TO DO APP</title>
   <link rel="stylesheet" href="style.css" />
   <!-- bootstrap icons -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css" />
@@ -14,16 +14,10 @@
   <!-- navbar and login -->
   <nav class="navbar navbar-dark navbar-expand-lg bg-dark">
     <div class="container">
-      <a class="navbar-brand" href="#">Todo List</a>
+      <a class="navbar-brand" href="#">To do List</a>
       <div id="auth">
-        
-          <!-- <a class="btn btn-sm btn-primary mx-2" data-bs-toggle="modal" data-bs-target="#loginModal">Login</a>
-          <a class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#registerModal">Register</a> -->
-        
-        <!-- <div class="ifLogout">
-          <span class="text-light"></span>
-          <a href="" class="text-white-50 my-2 signout">sign out</a>
-        </div> -->
+        <a class="btn btn-sm btn-primary mx-2" data-bs-toggle="modal" data-bs-target="#loginModal">Login</a>
+        <a class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#registerModal">Register</a>
       </div>
     </div>
   </nav>
@@ -69,9 +63,7 @@
               <span>Forgot your password?</span>
             </div>
 
-            <div class="submit-button text-center mt-3">
-              <button type="submit" class="btn btn-dark col-12">Login</button>
-            </div>
+            <input type="submit" value="Login" class="form-control mt-3 text-light bg-dark">
           </form>
         </div>
       </div>
@@ -93,11 +85,7 @@
             <label for="pwd" class="form-label mt-2 fw-bold">Password</label>
             <input type="text" class="form-control" name="pwd" id="pwd" />
 
-            <div class="submit-button text-center mt-3">
-              <button type="submit" class="btn btn-dark col-12">
-                Register
-              </button>
-            </div>
+            <input type="submit" value="Register" class="form-control mt-3 text-light bg-dark">
           </form>
         </div>
       </div>
